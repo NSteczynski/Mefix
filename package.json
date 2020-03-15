@@ -1,0 +1,11 @@
+{
+  "name": "mefix",
+  "version": "0.0.1",
+  "description": "Mefix is a typescript based 3D | 2D engine.",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "author": "Norbert Steczyński",
+  "license": "MIT"
+}

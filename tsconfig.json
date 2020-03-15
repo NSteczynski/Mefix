@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "AMD",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "target": "ES6",
+    "declaration": true,
+    "moduleResolution": "node",
+    "outFile": "build/mefix.js"
+  },
+  "files": ["./Engine.ts"]
+}

@@ -1,0 +1,11 @@
+~*
+
+#build output
+/bundle*
+/vendor
+/dist
+/build
+
+#IDE
+/.idea
+/.git
