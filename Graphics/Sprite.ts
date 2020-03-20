@@ -1,17 +1,18 @@
-import Material from "./Material"
-import MaterialManager from "./MaterialManager"
-import Matrix from "../Math/Matrix"
-import GLBuffer from '../WebGL/GLBuffer'
-import Vertex from "./Vertex"
-import AttributeInfo from "../WebGL/AttributeInfo"
+import Buffer from '../WebGL/Buffer'
+import AttributeInfo from '../WebGL/AttributeInfo'
+import Material from './Material'
+import Vertex from './Vertex'
+import MaterialManager from './MaterialManager'
+import Matrix from '../Maths/Matrix'
+import Message from '../Messages/Message'
+import MESSAGE_ASSET_LOADER_ASET_LOADED from '../Assets/AssetMessage'
+import DefaultParam from '../Core/DefaultParam'
 
 /** Represents a sprite. */
 export default class Sprite {
   private _name: string
-  private _width: number = 0
-  private _height: number = 0
 
-  private _buffer: GLBuffer
+  private _buffer: Buffer
   private _materialName: string
   private _material: Material
   private _vertices: Array<Vertex> = []
@@ -32,16 +33,6 @@ export default class Sprite {
     return this._name
   }
 
-  /** The width of this sprite. */
-  public get width(): number {
-    return this._width
-  }
-
-  /** The height of this sprite. */
-  public get height(): number {
-    return this._height
-  }
-
   /** Performs destruction routines on this sprite. */
   public destroy(): void {
     if (this._buffer)
@@ -55,7 +46,7 @@ export default class Sprite {
 
   /** Performs loading routines on this sprite. */
   public load(): void {
-    this._buffer = new GLBuffer()
+    this._buffer = new Buffer()
 
     const positionAttribute = new AttributeInfo()
     positionAttribute.location = 0
@@ -67,7 +58,9 @@ export default class Sprite {
     texCoordAttribute.size = 2
     this._buffer.addAttributeLocation(texCoordAttribute)
 
-    this.calculateVertices()
+    if (!this._material.diffuseTexture.isLoaded)
+      return Message.subscribe(MESSAGE_ASSET_LOADER_ASET_LOADED + this._material.diffuseTexture.name, this.calculateVertices.bind(this))
+    return this.calculateVertices()
   }
 
   /**
@@ -77,8 +70,8 @@ export default class Sprite {
    * @param projection The projection matrix to be applied.
    */
   public draw(model: Matrix, view: Matrix, projection: Matrix): void {
-    if (this._material.diffuseTexture && this._width !== this._material.diffuseTexture.width && this._height !== this._material.diffuseTexture.height)
-      this.calculateVertices()
+    if (!this._material.diffuseTexture.isLoaded)
+      return undefined
     this._material.apply(model, view, projection)
 
     this._buffer.bind()
@@ -87,28 +80,21 @@ export default class Sprite {
 
   /** Calculates the vertices for this sprite. */
   private calculateVertices(): void {
-    this._width = this._material.diffuseTexture.width
-    this._height = this._material.diffuseTexture.height
-
-    const minX = -this._width / 2
-    const maxX = this._width / 2
-
-    const minY = -this._height /2
-    const maxY = this._height / 2
+    const width = this._material.diffuseTexture.width / DefaultParam.x
+    const height = this._material.diffuseTexture.height / DefaultParam.y
 
     this._vertices = [
-      //          x     y     z    u    v
-      new Vertex(minX, minY, 0.0, 0.0, 0.0),
-      new Vertex(minX, maxY, 0.0, 0.0, 1.0),
-      new Vertex(maxX, maxY, 0.0, 1.0, 1.0),
+      new Vertex(-width, -height, 0.0, 0.0, 1.0),
+      new Vertex(-width,  height, 0.0, 0.0, 0.0),
+      new Vertex( width,  height, 0.0, 1.0, 0.0),
 
-      new Vertex(maxX, maxY, 0.0, 1.0, 1.0),
-      new Vertex(maxX, minY, 0.0, 1.0, 0.0),
-      new Vertex(minX, minY, 0.0, 0.0, 0.0)
+      new Vertex( width,  height, 0.0, 1.0, 0.0),
+      new Vertex( width, -height, 0.0, 1.0, 1.0),
+      new Vertex(-width, -height, 0.0, 0.0, 1.0)
     ]
 
     this._buffer.clearData()
-    this._vertices.forEach(vertice => this._buffer.pushBackData(vertice.toArray()))
+    this._vertices.map(vertice => this._buffer.pushBackData(vertice.toArray()))
     this._buffer.uplaod()
     this._buffer.unbind()
   }

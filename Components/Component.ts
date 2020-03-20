@@ -1,32 +1,31 @@
-import Matrix from '../Math/Matrix'
-import GameObject from '../Entities/GameObject'
+import GameObject from '../World/GameObject'
+import Matrix from '../Maths/Matrix'
+import Collider from '../Collider/Collider'
+import Collider2D from '../Collider/Collider2D'
+import Transform from '../Maths/Transform'
 
-export default class Component {
+export default abstract class Component {
   /** The owning game object. */
   public owner: GameObject
-
   /** The name of component. */
-  public name: string
+  public readonly name: string
 
-  /**
-   * Creates a new Component
-   * @param name The name of component.
-   */
-  public constructor(name: string) {
-    this.name = name
+  /** Creates a new Component */
+  public constructor() {
+    this.name = Object.getPrototypeOf(this).constructor.name
   }
 
-  /** It is called only once on start and if component is enabled. */
-  public start(): void {
-
+  /** The owner transform. */
+  public get transform(): Transform {
+    return this.owner.transform
   }
+
+  /** It is called only once on start. */
+  public start(): void {}
 
   /** It is called once per frame. */
-  public update(): void {
+  public update(): void {}
 
-  }
-
-  public render(view: Matrix, projection: Matrix): void {
-    
-  }
+  /** It is called once per frame. */
+  public render(view: Matrix, projection: Matrix): void {}
 }

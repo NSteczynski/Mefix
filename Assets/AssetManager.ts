@@ -1,15 +1,14 @@
-import Message from "../Message/Message"
-import ImageAssetLoader from "./ImageAssetLoader"
-import MESSAGE_ASSET_LOADER_ASET_LOADED from './MessageAsset'
-import { Dictionary, Asset, AssetLoader } from "../Core/Types"
+import Dictionary from '../Core/Dictionary'
+import Asset from './Asset'
+import AssetLoader from './AssetLoader'
+import ImageAssetLoader from './ImageAssetLoader'
+import Message from '../Messages/Message'
+import MESSAGE_ASSET_LOADER_ASET_LOADED from './AssetMessage'
 
 /** Responsible for managing assets. */
-export default class AssetManager {
+export default abstract class AssetManager {
   private static _loaders: Array<AssetLoader> = []
   private static _loadedAssets: Dictionary<Asset> = {}
-
-  /** Prevent creating new class. */
-  private constructor() {}
 
   /** Initializes Asset Manager. */
   public static initialize(): void {

@@ -1,10 +1,10 @@
-import Shader from '../Shaders/Shader'
-import TextureManager from './TextureManager'
-import Matrix from '../Math/Matrix'
 import Color from './Color'
 import Texture from './Texture'
+import TextureManager from './TextureManager'
+import Matrix from '../Maths/Matrix'
+import Shader from '../Shaders/Shader'
 
-/** A material represents surface information which is used during rendering. */
+/** Represents a material surface information which is used during rendering. */
 export default class Material {
   /** The color value of the tint to apply to the material. */
   public tint: Color
@@ -17,8 +17,8 @@ export default class Material {
 
   /**
    * Creates a new material.
-   * @param name The name of this material.
-   * @param shader The shader used by this material.
+   * @param name The name of material.
+   * @param shader The shader used by material.
    * @param diffuseTextureName The name of the diffuse texture.
    * @param tint The color value of the tint to apply to the material.
    */
@@ -33,7 +33,7 @@ export default class Material {
   }
 
   /**
-   * Applies this material.
+   * Applies material.
    * @param model The model matrix to be applied.
    * @param view The view matrix to be applied.
    * @param projection The projection matrix to be applied.
@@ -42,7 +42,7 @@ export default class Material {
     this._shader.applyStandardUniforms(this, model, view, projection)
   }
 
-  /** The name of this material. */
+  /** The name of material. */
   public get name(): string {
     return this._name
   }

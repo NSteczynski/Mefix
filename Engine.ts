@@ -1,37 +1,31 @@
-import GLUtilities, { GL } from './WebGL/GLUtilities'
-import Time from './Core/Time'
+import Utilities from './WebGL/Utilities'
 import AssetManager from './Assets/AssetManager'
 import ShaderManager from './Shaders/ShaderManager'
 import InputManager from './Input/InputManager'
-import LevelManager from './World/LevelManager'
-import ColliderManager from './Collisions/ColliderManager'
-import MessageSender from './Message/MessageSender'
+import SceneManager from './World/SceneManager'
+import MessageSender from './Messages/MessageSender'
+import ColliderManager from './Collider/ColliderManager'
+import ColliderManager2D from './Collider/ColliderManager2D'
 
 /** Demo */
 import Demo from './Demo/Demo'
+import Time from './Core/Time'
 
-/** The game engine class. */
-export default class Engine {
-  private static _time: Time
+/** Responsible for logic, starting, updating and rendering. */
+export default abstract class Engine {
+  private static _time: Time = new Time()
 
-  /** Prevent creating new class. */
-  private constructor() {}
-
-  public static initialize() {
-    /** Create time element. */
-    this._time = new Time()
-    /** Create a new canvas element. */
-    GLUtilities.initialize()
-
-    /** Initialize managers. */
+  /** Initializes engine and all managers. */
+  public static initialize(): void {
+    Utilities.initialize()
     AssetManager.initialize()
     ShaderManager.initialize()
     InputManager.initialize()
 
-    /** Initialize Demo */
     Demo.initialize()
 
     /** Handle window resize. */
+    this.onResize()
     window.onload = this.onResize
     window.onresize = this.onResize
 
@@ -39,58 +33,36 @@ export default class Engine {
   }
 
   private static onResize(): void {
-    /** Update canvas width and height. */
-    GLUtilities.canvas.width = window.innerWidth
-    GLUtilities.canvas.height = window.innerHeight
+    Utilities.canvas.width = window.innerWidth
+    Utilities.canvas.height = window.innerHeight
 
-    /** Active camera resize. */
-    if (LevelManager.activeLevel === undefined || LevelManager.activeLevel.activeCamera === undefined)
-      return undefined
-    LevelManager.activeLevel.activeCamera.onResize()
+    if (SceneManager.activeScene.activeCamera !== undefined)
+      SceneManager.activeScene.activeCamera.onResize()
   }
 
   private static loop(): void {
     requestAnimationFrame(this.loop.bind(this))
-    if (LevelManager.activeLevel === undefined)
+    this._time.checkDelta()
+
+    if (SceneManager.activeScene === undefined)
       return undefined
 
-    /** Update Time delta time. */
-    this._time.deltaTime()
-
-    this.start()
     this.update()
-
-    /** Update Time previous delta time. */
-    this._time.prevDeltaTime()
-  }
-
-  private static start(): void {
-    /** Start active level. */
-    LevelManager.activeLevel.start()
+    this.render()
+    this._time.checkPrevDelta()
   }
 
   private static update(): void {
-    /** Update collisions. */
     ColliderManager.update()
-
-    /** Update messages. */
+    ColliderManager2D.update()
     MessageSender.update()
-
-    /** Update active level. */
-    LevelManager.activeLevel.update()
-
-    this.render()
+    SceneManager.activeScene.update()
   }
 
   private static render(): void {
-    /** Reset WebGL color. */
-    GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT)
-
-    /** WebGL render black background if there is not active camera. */
-    if (LevelManager.activeLevel.activeCamera === undefined)
-      return GL.clearColor(0, 0, 0, 255)
-
-    /** Render active camera. */
-    LevelManager.activeLevel.activeCamera.render()
+    Utilities.webGL.clear(Utilities.webGL.COLOR_BUFFER_BIT | Utilities.webGL.DEPTH_BUFFER_BIT)
+    if (SceneManager.activeScene.activeCamera === undefined)
+      return Utilities.webGL.clearColor(0, 0, 0, 255)
+    SceneManager.activeScene.activeCamera.renderView()
   }
 }

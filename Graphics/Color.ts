@@ -11,10 +11,10 @@ export default class Color {
 
   /**
    * Creates a new color.
-   * @param r The red value [0-255]
-   * @param g The green value [0-255]
-   * @param b The blue value [0-255]
-   * @param a The alpha value [0-255]
+   * @param r The red value [0-255]. Default: 255
+   * @param g The green value [0-255]. Default: 255
+   * @param b The blue value [0-255]. Default: 255
+   * @param a The alpha value [0-255]. Default: 255
    */
   public constructor(r: number = 255, g: number = 255, b: number = 255, a: number = 255) {
     this.r = r
@@ -23,17 +23,17 @@ export default class Color {
     this.a = a
   }
 
-  /** Returns this color as a number array */
+  /** Returns color as a number array */
   public toArray(): Array<number> {
     return [this.r, this.g, this.b, this.a]
   }
 
-  /** Returns this color as a float array */
+  /** Returns color as a float array */
   public toFloatArray(): Array<number> {
     return [this.r / 255.0, this.g / 255.0, this.b / 255.0, this.a / 255.0]
   }
 
-  /** Returns this color as a float32 array */
+  /** Returns color as a float32 array */
   public toFloat32Array(): Float32Array {
     return new Float32Array(this.toFloatArray())
   }

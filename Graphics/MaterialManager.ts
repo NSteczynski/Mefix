@@ -1,20 +1,17 @@
-import Material from "./Material"
-import { Dictionary } from "../Core/Types"
+import Dictionary from '../Core/Dictionary'
+import Material from './Material'
 
-/** Responsible for managing materials references. */
-export default class MaterialManager {
+/** Responsible for managing materials. */
+export default abstract class MaterialManager {
   private static _materials: Dictionary<MaterialReferance> = {}
-
-  /** Prevent creating new class. */
-  private constructor() {}
 
   /**
    * Registers the provided material with this manager.
    * @param material The material to be registered.
    */
   public static registerMaterial(material: Material): void {
-    if (MaterialManager._materials[material.name] === undefined)
-      MaterialManager._materials[material.name] = new MaterialReferance(material)
+    if (this._materials[material.name] === undefined)
+      this._materials[material.name] = new MaterialReferance(material)
   }
 
   /**
@@ -23,10 +20,10 @@ export default class MaterialManager {
    * @param name The name of the material to retrieve. Case sensitive.
    */
   public static getMaterial(name: string): Material {
-    if (MaterialManager._materials[name] === undefined)
+    if (this._materials[name] === undefined)
       return undefined
-    MaterialManager._materials[name].referenceCount++
-    return MaterialManager._materials[name].material
+    this._materials[name].referenceCount++
+    return this._materials[name].material
   }
 
   /**
@@ -35,14 +32,14 @@ export default class MaterialManager {
    * @param name The name of the material to be released.
    */
   public static releaseMaterial(name: string): void {
-    if (MaterialManager._materials[name] === undefined)
+    if (this._materials[name] === undefined)
       return console.warn('Cannot release a material which has not been registered.')
-    MaterialManager._materials[name].referenceCount--
-    if (MaterialManager._materials[name].referenceCount >= 0)
+    this._materials[name].referenceCount--
+    if (this._materials[name].referenceCount >= 0)
       return undefined
-    MaterialManager._materials[name].material.destroy()
-    MaterialManager._materials[name].material = undefined
-    delete MaterialManager._materials[name]
+    this._materials[name].material.destroy()
+    this._materials[name].material = undefined
+    delete this._materials[name]
   }
 }
 

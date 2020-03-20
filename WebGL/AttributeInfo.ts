@@ -1,8 +1,8 @@
-/** Represents the information needed for GLBuffer attribute. */
+/** Represents the information needed for Buffer attribute. */
 export default class AttributeInfo {
-  /** The location of this attribute. */
+  /** The location of attribute. */
   public location: number
-  /** The size (number of elements) in this attribute (i.e Vector3 = 3). */
+  /** The number of elements in attribute. */
   public size: number
   /** The number of elements from the beginning of the buffer. */
   public offset: number = 0

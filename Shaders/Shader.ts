@@ -1,9 +1,9 @@
-import ShaderManager from './ShaderManager'
-import Material from '../Graphics/Material'
+import Dictionary from '../Core/Dictionary'
+import Utilities from '../WebGL/Utilities'
 import Color from '../Graphics/Color'
-import Matrix from '../Math/Matrix'
-import { GL } from "../WebGL/GLUtilities"
-import { Dictionary } from '../Core/Types'
+import Matrix from '../Maths/Matrix'
+import Material from '../Graphics/Material'
+import ShaderManager from './ShaderManager'
 
 /** Represents a WebGL shader. */
 export default abstract class Shader {
@@ -34,7 +34,7 @@ export default abstract class Shader {
   public useProgram(): void {
     if (ShaderManager.activeShader === this)
       return undefined
-    GL.useProgram(this._program)
+    Utilities.webGL.useProgram(this._program)
     ShaderManager.activeShader = this
   }
 
@@ -49,7 +49,7 @@ export default abstract class Shader {
     if (matrix === undefined)
       return undefined
     const position = this.getUniformLocation(name)
-    GL.uniformMatrix4fv(position, false, matrix.toFloat32Array())
+    Utilities.webGL.uniformMatrix4fv(position, false, matrix.toFloat32Array())
   }
 
   /**
@@ -64,7 +64,7 @@ export default abstract class Shader {
       return undefined
 
     const position = this.getUniformLocation(name)
-    GL.uniform4fv(position, color.toFloat32Array())
+    Utilities.webGL.uniform4fv(position, color.toFloat32Array())
   }
 
   /**
@@ -79,7 +79,7 @@ export default abstract class Shader {
       return undefined
 
     const position = this.getUniformLocation(name)
-    GL.uniform1i(position, value)
+    Utilities.webGL.uniform1i(position, value)
   }
 
   /**
@@ -111,8 +111,8 @@ export default abstract class Shader {
    * @param fragmentSource The fragment source.
    */
   protected load(vertexSource: string, fragmentSource: string): void {
-    const vertexShader = this.loadShader(vertexSource, GL.VERTEX_SHADER)
-    const fragmentShader = this.loadShader(fragmentSource, GL.FRAGMENT_SHADER)
+    const vertexShader = this.loadShader(vertexSource, Utilities.webGL.VERTEX_SHADER)
+    const fragmentShader = this.loadShader(fragmentSource, Utilities.webGL.FRAGMENT_SHADER)
 
     this.createProgram(vertexShader, fragmentShader)
     this.detectAttributes()
@@ -120,44 +120,44 @@ export default abstract class Shader {
   }
 
   private loadShader(source: string, shaderType: number): WebGLShader {
-    const shader = GL.createShader(shaderType)
-    GL.shaderSource(shader, source)
-    GL.compileShader(shader)
-    const error = GL.getShaderInfoLog(shader).trim()
+    const shader = Utilities.webGL.createShader(shaderType)
+    Utilities.webGL.shaderSource(shader, source)
+    Utilities.webGL.compileShader(shader)
+    const error = Utilities.webGL.getShaderInfoLog(shader).trim()
     if (error !== "")
       throw new Error('Error compiling shader ' + this._name + ': ' + error)
     return shader
   }
 
   private createProgram(vertexShader: WebGLShader, fragmentShader: WebGLShader): void {
-    this._program = GL.createProgram()
+    this._program = Utilities.webGL.createProgram()
 
-    GL.attachShader(this._program , vertexShader)
-    GL.attachShader(this._program , fragmentShader)
-    GL.linkProgram(this._program)
+    Utilities.webGL.attachShader(this._program , vertexShader)
+    Utilities.webGL.attachShader(this._program , fragmentShader)
+    Utilities.webGL.linkProgram(this._program)
 
-    const error = GL.getProgramInfoLog(this._program).trim()
+    const error = Utilities.webGL.getProgramInfoLog(this._program).trim()
     if (error !== '')
       throw new Error('Error linking shader ' + this._name + ': ' + error)
   }
 
   private detectAttributes(): void {
-    const attributesCount = GL.getProgramParameter(this._program, GL.ACTIVE_ATTRIBUTES)
+    const attributesCount = Utilities.webGL.getProgramParameter(this._program, Utilities.webGL.ACTIVE_ATTRIBUTES)
     for (let i = 0; i < attributesCount; ++i) {
-      const info = GL.getActiveAttrib(this._program, i)
+      const info = Utilities.webGL.getActiveAttrib(this._program, i)
       if (!info)
         break
-      this._attributes[info.name] = GL.getAttribLocation(this._program, info.name)
+      this._attributes[info.name] = Utilities.webGL.getAttribLocation(this._program, info.name)
     }
   }
 
   private detectUniforms(): void {
-    const uniformCount = GL.getProgramParameter(this._program, GL.ACTIVE_UNIFORMS)
+    const uniformCount = Utilities.webGL.getProgramParameter(this._program, Utilities.webGL.ACTIVE_UNIFORMS)
     for (let i = 0; i < uniformCount; ++i) {
-      const info = GL.getActiveUniform(this._program, i)
+      const info = Utilities.webGL.getActiveUniform(this._program, i)
       if (!info)
         break
-      this._uniforms[info.name] = GL.getUniformLocation(this._program, info.name)
+      this._uniforms[info.name] = Utilities.webGL.getUniformLocation(this._program, info.name)
     }
   }
 }

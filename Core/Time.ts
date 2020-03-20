@@ -7,11 +7,11 @@ export default class Time {
     return this._deltaTime
   }
 
-  public deltaTime(): void {
-    Time._deltaTime = performance.now() - Time._prevDeltaTime
+  public checkDelta(): void {
+    Time._deltaTime = (performance.now() - Time._prevDeltaTime) / 1000
   }
 
-  public prevDeltaTime(): void {
+  public checkPrevDelta(): void {
     Time._prevDeltaTime = performance.now()
   }
 }

@@ -1,6 +1,6 @@
-import { Asset } from "../Core/Types"
+import Asset from './Asset'
 
-/** Image Asset. */
+/** Represents a image asset. */
 export default class ImageAsset implements Asset {
   /** The name of asset. */
   public readonly name: string

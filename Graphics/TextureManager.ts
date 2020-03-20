@@ -1,12 +1,9 @@
-import Texture from "./Texture"
-import { Dictionary } from '../Core/Types'
+import Dictionary from '../Core/Dictionary'
+import Texture from './Texture'
 
-/** Responsible for managing textures references. */
-export default class TextureManager {
+/** Responsible for managing textures. */
+export default abstract class TextureManager {
   private static _textures: Dictionary<TextureReference> = {}
-
-  /** Prevent creating new class. */
-  private constructor() {}
 
   /**
    * Gets a Texture with the given name. This is case-sensitive. If no Texture is found, undefined is returned.

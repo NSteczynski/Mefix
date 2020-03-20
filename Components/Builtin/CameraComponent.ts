@@ -1,114 +1,58 @@
-import Behaviour from '../Behaviour'
+import Component from '../Component'
 import Color from '../../Graphics/Color'
-import Matrix from '../../Math/Matrix'
-import LevelManager from '../../World/LevelManager'
-import { GL } from '../../WebGL/GLUtilities'
-import { ProjectionType } from "../../Core/Types"
+import ProjectionType from '../../Core/ProjectionType'
+import Matrix from '../../Maths/Matrix'
+import Utilities from '../../WebGL/Utilities'
+import SceneManager from '../../World/SceneManager'
+import DefaultParam from '../../Core/DefaultParam'
 
-export default class CameraComponent extends Behaviour {
-  private _background: Color
-  private _prevBackground: Color
-  private _projectionType: ProjectionType
-  private _size: number
-  private _near: number
-  private _far: number
+const defaultBackground = new Color(146 / 255, 206 / 255, 247 / 255, 1.0)
 
-  private _shouldUpdateView: boolean = true
+export default class CameraComponent extends Component {
+  public background: Color
+  public projectionType: ProjectionType
+  public near: number
+  public far: number
+
   private _projection: Matrix = Matrix.identity()
 
-  public constructor(background: Color = defaultBackgound, projectionType: ProjectionType = ProjectionType.ORTHOGRAPHIC, size: number = 2, near: number = 0.1, far: number = 100.0, isEnabled?: boolean) {
-    super('Camera', isEnabled)
-    this._background = background
-    this._projectionType = projectionType
-    this._size = size
-    this._near = near
-    this._far = far
+  /**
+   * Creates a new Camera Component.
+   * @param background The background color of view. Default: Color(146 / 255, 206 / 255, 247 / 255, 1.0)
+   * @param projectionType The projection type of camera. Default: ORTHOGRAPHIC
+   * @param near The near distance to be rendered. Default: 0.1
+   * @param far The far distance to be rendered. Default: 100
+   */
+  public constructor(background: Color = defaultBackground, projectionType: ProjectionType = ProjectionType.ORTHOGRAPHIC, near: number = 0.1, far: number = 100) {
+    super()
+    this.background = background
+    this.projectionType = projectionType
+    this.near = near
+    this.far = far
 
-    GL.enable(GL.BLEND)
-    GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
-    GL.enable(GL.DEPTH_TEST)
-    GL.depthFunc(GL.LEQUAL)
+    Utilities.webGL.enable(Utilities.webGL.BLEND)
+    Utilities.webGL.blendFunc(Utilities.webGL.SRC_ALPHA, Utilities.webGL.ONE_MINUS_SRC_ALPHA)
+    Utilities.webGL.enable(Utilities.webGL.DEPTH_TEST)
+    Utilities.webGL.depthFunc(Utilities.webGL.LEQUAL)
 
-    if (LevelManager.activeLevel)
-      LevelManager.activeLevel.registerCamera(this)
+    if (SceneManager.activeScene !== undefined)
+      SceneManager.activeScene.registerCamera(this)
   }
 
-  public get background(): Color {
-    return this._background
-  }
-
-  public set background(color: Color) {
-    this._prevBackground = this._background
-    this._background = color
-    this._shouldUpdateView = true
-  }
-
-  public get projectionType(): ProjectionType {
-    return this._projectionType
-  }
-
-  public set projectionType(projectionType: ProjectionType) {
-    this._projectionType = projectionType
-    this._shouldUpdateView = true
-  }
-
-  public get size(): number {
-    return this._size
-  }
-
-  public set size(size: number) {
-    this._size = size
-    this._shouldUpdateView = true
-  }
-
-  public get near(): number {
-    return this._near
-  }
-
-  public set near(near: number) {
-    this._near = near
-    this._shouldUpdateView = true
-  }
-
-  public get far(): number {
-    return this._far
-  }
-
-  public set far(far: number) {
-    this._far = far
-    this._shouldUpdateView = true
-  }
-
+  /** Resizes viewport to window size. */
   public onResize() {
-    GL.viewport(0, 0, window.innerWidth, window.innerHeight)
-    this._shouldUpdateView = true
+    Utilities.webGL.viewport(0, 0, window.innerWidth, window.innerHeight)
   }
 
-  public getCameraView(): Matrix {
-    if (this._shouldUpdateView)
-      this.updateView()
-    return Matrix.multiply(this.owner.worldMatrix, this._projection)
-  }
-
-  public render(): void {
-    if (this._prevBackground !== this._background)
-      this.updateBackground()
-    if (this._shouldUpdateView)
-      this.updateView()
-    const reverseMatrix = Matrix.inverse(this.owner.worldMatrix)
-    LevelManager.activeLevel.render(reverseMatrix, this._projection)
+  /** Renders camera view. */
+  public renderView(): void {
+    this.updateView()
+    Utilities.webGL.clearColor(this.background.r, this.background.g, this.background.b, this.background.a)
+    // const reverseMatrix = Matrix.inverse(this.owner.worldMatrix)
+    SceneManager.activeScene.render(Matrix.multiply(this.owner.worldMatrix, Matrix.scale(DefaultParam)), this._projection)
   }
 
   private updateView(): void {
-    this._projection = Matrix.orthographic(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, this._near, this._far)
-    this._shouldUpdateView = false
-  }
-
-  private updateBackground(): void {
-    this._prevBackground = this._background
-    const { r, g, b, a } = this._background
-    GL.clearColor(r, g, b, a)
+    this._projection = Matrix.orthographic(-window.innerWidth / 2, window.innerWidth / 2, -window.innerHeight / 2, window.innerHeight / 2, this.near, this.far)
   }
 }
-
-const defaultBackgound = new Color(146 / 255, 206 / 255, 247 / 255, 1.0)

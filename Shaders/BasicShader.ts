@@ -1,9 +1,11 @@
 import Shader from './Shader'
+import BuiltinShader from './BuiltinShader'
+import Matrix from '../Maths/Matrix'
 import Material from '../Graphics/Material'
-import Matrix from '../Math/Matrix'
-import { BuiltinShader } from '../Core/Types'
 
+/** Represents a basic shader. */
 export default class BasicShader extends Shader {
+  /** Creates a new basic shader. */
   public constructor() {
     super(BuiltinShader.BASIC)
     this.load(vertexShaderSource, fragmentShaderSource)

@@ -1,8 +1,8 @@
-import AssetManager from "./AssetManager"
-import ImageAsset from "./ImageAsset"
-import { AssetLoader } from "../Core/Types"
+import AssetLoader from './AssetLoader'
+import ImageAsset from './ImageAsset'
+import AssetManager from './AssetManager'
 
-/** Image Asset Loader. */
+/** Represents a asset image loader. */
 export default class ImageAssetLoader implements AssetLoader {
   /** The extension supported by asset loader. */
   public get supportedExtensions(): Array<string> {

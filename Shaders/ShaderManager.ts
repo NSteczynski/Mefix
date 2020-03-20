@@ -1,13 +1,11 @@
-import Shader from "./Shader"
+import Dictionary from '../Core/Dictionary'
+import Shader from './Shader'
 import BasicShader from './BasicShader'
-import { Dictionary } from "../Core/Types"
 
-/** Responsible for managing shaders references. */
-export default class ShaderManager {
+/** Responsible for managing shaders. */
+export default abstract class ShaderManager {
   private static _shaders: Dictionary<ShaderReference> = {}
   private static _activeShader: Shader
-
-  private constructor() {}
 
   /** Initializes this shader manager. */
   public static initialize(): void {
