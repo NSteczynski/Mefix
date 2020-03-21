@@ -95,7 +95,7 @@ export default class Sprite {
 
     this._buffer.clearData()
     this._vertices.map(vertice => this._buffer.pushBackData(vertice.toArray()))
-    this._buffer.uplaod()
+    this._buffer.upload()
     this._buffer.unbind()
   }
 }

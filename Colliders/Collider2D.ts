@@ -42,9 +42,6 @@ export default abstract class Collider2D extends Component {
     this.calculateVertices()
   }
 
-  /** The center position on world. */
-  public abstract get center(): Vector2
-
   public start(): void {
     this._buffer = new Buffer(Utilities.webGL.FLOAT, Utilities.webGL.ARRAY_BUFFER, Utilities.webGL.LINES)
 
@@ -83,7 +80,7 @@ export default abstract class Collider2D extends Component {
   protected calculateVertices(): void {
     this._buffer.clearData()
     this._vertices.map(vertice => this._buffer.pushBackData(vertice.toArray()))
-    this._buffer.uplaod()
+    this._buffer.upload()
     this._buffer.unbind()
   }
 }

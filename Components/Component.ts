@@ -1,7 +1,7 @@
 import GameObject from '../World/GameObject'
 import Matrix from '../Maths/Matrix'
-import Collider from '../Collider/Collider'
-import Collider2D from '../Collider/Collider2D'
+import Collider from '../Colliders/Collider'
+import Collider2D from '../Colliders/Collider2D'
 import Transform from '../Maths/Transform'
 
 export default abstract class Component {

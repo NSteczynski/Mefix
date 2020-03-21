@@ -1,7 +1,6 @@
 import Collider2D from '../Collider2D'
 import Vector2 from '../../Maths/Vector2'
 import Matrix from '../../Maths/Matrix'
-import Vector3 from '../../Maths/Vector3'
 import Transform from '../../Maths/Transform'
 
 export default class CircleCollider2D extends Collider2D {
@@ -25,26 +24,20 @@ export default class CircleCollider2D extends Collider2D {
   /** The radius of the collider. */
   public set radius(value: number) {
     this._radius = this.radius
-    this.calculateVertices()
-  }
-
-  public get center(): Vector2 {
-    const offsetMultiplier = new Vector2(this.radius * 2, this.radius * 2)
-    return this.offset.multiply(offsetMultiplier).multiply(this.transform.scale).rotate(this.transform.rotation).add(this.owner.getWorldPosition())
   }
 
   public render(view: Matrix, projection: Matrix): void {
     if (!this._material.diffuseTexture.isLoaded)
       return undefined
-    this._material.apply(new Transform(this.owner.getWorldPosition()).getTransformationMatrix(), view, projection)
+    // this.calculateVertices()
+    this._material.apply(new Transform(this.owner.worldPosition).getTransformationMatrix(), view, projection)
 
     this._buffer.bind()
     this._buffer.draw()
   }
 
   protected calculateVertices(): void {
-    const worldScale = this.owner.getWorldScale()
-    const scale = worldScale.x > worldScale.y ? worldScale.x : worldScale.y
+    const scale =  this.owner.worldScale.x > this.owner.worldScale.y ? this.owner.worldScale.x : this.owner.worldScale.y
     const width = this._radius * scale
     const height = this._radius * scale
     const offX = this.offset.x * width * 2

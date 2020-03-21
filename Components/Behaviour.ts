@@ -1,6 +1,6 @@
 import Component from './Component'
-import Collider from '../Collider/Collider'
-import Collider2D from '../Collider/Collider2D'
+import Collider from '../Colliders/Collider'
+import Collider2D from '../Colliders/Collider2D'
 
 export default abstract class Behaviour extends Component {
   /** It is called when collider has entered in collision with another collider. */

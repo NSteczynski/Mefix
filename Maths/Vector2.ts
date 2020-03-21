@@ -1,4 +1,5 @@
 import Vector3 from "./Vector3"
+import Matrix from "./Matrix"
 
 /** Represents a 2-parameter vector. */
 export default class Vector2 {
@@ -87,47 +88,13 @@ export default class Vector2 {
   }
 
   /**
-   * Rotates in X axis vector by provided radians.
-   * @param radians The rotation in radians.
-   */
-  public rotateX(radians: number): Vector2 {
-    const sinus = Math.sin(radians)
-    const cosinus = Math.cos(radians)
-    const y = cosinus * this.y - sinus * 0
-    return new Vector2(this.x, y)
-  }
-
-  /**
-   * Rotates in Y axis vector by provided radians.
-   * @param radians The rotation in radians.
-   */
-  public rotateY(radians: number): Vector2 {
-    const sinus = Math.sin(radians)
-    const cosinus = Math.cos(radians)
-    const x = sinus * 0 + cosinus * this.x
-    return new Vector2(x, this.y)
-  }
-
-  /**
-   * Rotates in Z axis vector by provided radians.
-   * @param radians The rotation in radians.
-   */
-  public rotateZ(radians: number): Vector2 {
-    const sinus = Math.sin(radians)
-    const cosinus = Math.cos(radians)
-    const x = cosinus * this.x - sinus * this.y
-    const y = sinus * this.x + cosinus * this.y
-    return new Vector2(x, y)
-  }
-
-  /**
    * Rotates vector by provided vector.
    * @param vector The rotation in vector.
    */
   public rotate(vector: Vector2 | Vector3): Vector2 {
     if (vector instanceof Vector2)
-      return this.rotateX(vector.x).rotateY(vector.y)
-    return this.rotateX(vector.x).rotateY(vector.y).rotateZ(vector.z)
+      return this.toVector3().rotateX(vector.x).rotateY(vector.y).toVector2()
+    return this.toVector3().rotateX(vector.x).rotateY(vector.y).rotateZ(vector.z).toVector2()
   }
 
   /**
@@ -152,6 +119,11 @@ export default class Vector2 {
     if (projection > max)
       max = projection
     return [min, max]
+  }
+
+  /** Returns the absolute value of the vector. */
+  public abs(): Vector2 {
+    return new Vector2(Math.abs(this.x), Math.abs(this.y))
   }
 
   /** Returns vector3 from this vector with z = 0. */

@@ -92,7 +92,7 @@ export default class Buffer {
   }
 
   /** Uploads buffer's data to the GPU. */
-  public uplaod(): void {
+  public upload(): void {
     Utilities.webGL.bindBuffer(this._targetBufferType, this._buffer)
     const bufferData = this.bufferDataFromType(this._dataType)
     Utilities.webGL.bufferData(this._targetBufferType, bufferData, Utilities.webGL.STATIC_DRAW)

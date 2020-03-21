@@ -33,10 +33,6 @@ export default class PolygonCollider2D extends Collider2D {
     this.calculateVertices()
   }
 
-  public get center(): Vector2 {
-    return this.offset.multiply(this.transform.scale).rotate(this.transform.rotation).add(this.owner.getWorldPosition())
-  }
-
   protected calculateVertices(): void {
     const vectorWH = new Vector2(1, 1)
     const vectorOff = new Vector2(this._offset.x, this._offset.y)

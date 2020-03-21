@@ -37,10 +37,6 @@ export default class BoxCollider2D extends Collider2D {
     return points.map(point => point.multiply(this._size))
   }
 
-  public get center(): Vector2 {
-    return this.offset.multiply(this.transform.scale).rotate(this.transform.rotation).add(this.owner.getWorldPosition())
-  }
-
   protected calculateVertices(): void {
     this._vertices = points.reduce((r, point, index): Array<Vector2> => {
       const nextIndex = index + 1 === points.length ? 0 : index + 1

@@ -4,12 +4,12 @@ import ShaderManager from './Shaders/ShaderManager'
 import InputManager from './Input/InputManager'
 import SceneManager from './World/SceneManager'
 import MessageSender from './Messages/MessageSender'
-import ColliderManager from './Collider/ColliderManager'
-import ColliderManager2D from './Collider/ColliderManager2D'
+import ColliderManager from './Colliders/ColliderManager'
+import ColliderManager2D from './Colliders/ColliderManager2D'
+import Time from './Core/Time'
 
 /** Demo */
 import Demo from './Demo/Demo'
-import Time from './Core/Time'
 
 /** Responsible for logic, starting, updating and rendering. */
 export default abstract class Engine {
@@ -42,14 +42,15 @@ export default abstract class Engine {
 
   private static loop(): void {
     requestAnimationFrame(this.loop.bind(this))
-    this._time.checkDelta()
+    this._time.checkPrevDelta()
 
     if (SceneManager.activeScene === undefined)
       return undefined
 
     this.update()
     this.render()
-    this._time.checkPrevDelta()
+    this._time.checkDelta()
+    // console.log('fps: ' + 1 / Time.deltaTime)
   }
 
   private static update(): void {

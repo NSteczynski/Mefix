@@ -79,9 +79,9 @@ export default class Matrix {
   public static translation(position: Vector3): Matrix {
     const matrix = new Matrix()
 
-    matrix._data[12] = position.x * 2
-    matrix._data[13] = position.y * 2
-    matrix._data[14] = position.z * 2
+    matrix._data[12] = position.x
+    matrix._data[13] = position.y
+    matrix._data[14] = position.z
 
     return matrix
   }

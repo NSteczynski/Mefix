@@ -63,8 +63,8 @@ export default abstract class ColliderManager {
   }
 
   private static checkPolyPoly(collider: PolygonCollider2D | BoxCollider2D, checkCollider: PolygonCollider2D | BoxCollider2D): boolean {
-    const compPoints = collider.points.map(point => point.multiply(collider.transform.scale).rotate(collider.transform.rotation).add(collider.center))
-    const checkPoints = checkCollider.points.map(point => point.multiply(checkCollider.transform.scale).rotate(checkCollider.transform.rotation).add(checkCollider.center))
+    const compPoints = collider.points.map(point => this.pointToWorld(point, collider))
+    const checkPoints = checkCollider.points.map(point => this.pointToWorld(point, checkCollider))
 
     const compAxes = compPoints.map((point, index) => {
       const nextIndex = index + 1 === compPoints.length ? 0 : index + 1
@@ -93,29 +93,37 @@ export default abstract class ColliderManager {
   }
 
   private static checkPolyCircle(collider: PolygonCollider2D | BoxCollider2D, checkCollider: CircleCollider2D): boolean {
-    if (this.checkPolyPoint(collider, checkCollider.center))
+    const checkOffsetMultiplier = new Vector2(checkCollider.radius * 2, checkCollider.radius * 2)
+    const checkCenter = this.pointToWorld(checkCollider.offset.multiply(checkOffsetMultiplier), checkCollider)
+    if (this.checkPolyPoint(collider, checkCenter))
       return true
-    const compPoints = collider.points.map(point => point.multiply(collider.transform.scale).rotate(collider.transform.rotation).add(collider.center))
+    const compPoints = collider.points.map(point => this.pointToWorld(point, collider))
     return compPoints.some((point, index) => {
       const nextIndex = index + 1 === collider.points.length ? 0 : index + 1
-      const ap = checkCollider.center.substract(point)
+      const ap = checkCenter.substract(point)
       const ab = compPoints[nextIndex].substract(point)
       const magnitudeAB = ab.x * ab.x + ab.y * ab.y
       const dot = ap.x * ab.x + ap.y * ab.y
       const normal = dot / magnitudeAB
       const vector = normal < 0 ? point : normal > 1 ? compPoints[nextIndex] : new Vector2(point.x + ab.x * normal, point.y + ab.y * normal)
-      // const scale = checkCollider.transform.scale.x > checkCollider.transform.scale.y ? checkCollider.transform.scale.x : checkCollider.transform.scale.y
-      return vector.distance(checkCollider.center) < checkCollider.radius
+      const scale = checkCollider.owner.worldScale.x > checkCollider.owner.worldScale.y ? checkCollider.owner.worldScale.x : checkCollider.owner.worldScale.y
+      return vector.distance(checkCenter) < checkCollider.radius * scale
     })
   }
 
   private static checkCircleCircle(collider: CircleCollider2D, checkCollider: CircleCollider2D): boolean {
-    const distance = collider.center.distance(checkCollider.center)
-    return distance < collider.radius + checkCollider.radius
+    const compOffsetMultiplier = new Vector2(collider.radius * 2, collider.radius * 2)
+    const compCenter = this.pointToWorld(collider.offset.multiply(compOffsetMultiplier), collider)
+    const compScale = collider.owner.transform.scale.x > collider.owner.transform.scale.y ? collider.owner.transform.scale.x : collider.owner.transform.scale.y
+    const checkOffsetMultiplier = new Vector2(checkCollider.radius * 2, checkCollider.radius * 2)
+    const checkCenter = this.pointToWorld(checkCollider.offset.multiply(checkOffsetMultiplier), checkCollider)
+    const checkScale = checkCollider.owner.transform.scale.x > checkCollider.owner.transform.scale.y ? checkCollider.owner.transform.scale.x : checkCollider.owner.transform.scale.y
+    const distance = compCenter.distance(checkCenter)
+    return distance < collider.radius * compScale + checkCollider.radius * checkScale
   }
 
   private static checkPolyPoint(collider: PolygonCollider2D | BoxCollider2D, point: Vector2): boolean {
-    const compPoints = collider.points.map(point => point.multiply(collider.transform.scale).rotate(collider.transform.rotation).add(collider.center))
+    const compPoints = collider.points.map(point => this.pointToWorld(point, collider))
     const axes = compPoints.map((point, index) => {
       const nextIndex = index + 1 === collider.points.length ? 0 : index + 1
       return point.axis(compPoints[nextIndex])
@@ -130,6 +138,10 @@ export default abstract class ColliderManager {
       const pointMinMax = axis.x * point.x + axis.y * point.y
       return compMin <= pointMinMax && pointMinMax <= compMax
     })
+  }
+
+  private static pointToWorld(point: Vector2, collider: Collider2D): Vector2 {
+    return point.multiply(collider.owner.worldScale).rotate(collider.owner.worldRotation).add(collider.owner.worldPosition)
   }
 }
 
