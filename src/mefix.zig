@@ -14,4 +14,6 @@ pub fn loop() bool {
     return !core.window.shouldClose();
 }
 
-pub fn deinit() void {}
+pub fn deinit() void {
+    core.deinit();
+}

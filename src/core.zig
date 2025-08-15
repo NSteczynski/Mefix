@@ -24,3 +24,8 @@ pub fn init(width: u32, height: u32, title: [*:0]const u8) void {
     glfw.makeContextCurrent(window);
     glfw.swapInterval(0);
 }
+
+pub fn deinit() void {
+    window.destroy();
+    glfw.terminate();
+}
