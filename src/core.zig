@@ -36,8 +36,8 @@ pub fn init(width: u32, height: u32, title: [*:0]const u8) void {
 
     window.setRefreshCallback(refresh);
 
-    zgl.enable(.depth_test);
-    zgl.depthFunc(.less);
+    // zgl.enable(.depth_test);
+    // zgl.depthFunc(.less);
 
     zgl.enable(.cull_face);
     zgl.cullFace(.back);
