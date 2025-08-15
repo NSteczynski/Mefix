@@ -7,7 +7,7 @@ out vec2 v_Texcoord;
 
 void main()
 {
-  v_Texcoord = vec2(a_Texcoord.x, a_Texcoord.y);
+  v_Texcoord = vec2(a_Texcoord.x, a_Texcoord.y * -1.f);
 
   gl_Position = vec4(a_Position, 0.f, 1.f);
 }
