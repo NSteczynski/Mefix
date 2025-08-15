@@ -1,0 +1,24 @@
+.{
+    .name = .mefix,
+    .version = "0.0.0",
+    .fingerprint = 0xdc3dda29e9113de,
+    .minimum_zig_version = "0.15.0-dev.1519+dd4e25cf4",
+    .dependencies = .{
+        .glfw = .{
+            .url = "git+https://github.com/terraquad/zig-glfw#8a6e5d9775951365953e67da700febdf806ba971",
+            .hash = "glfw-0.3.0-YPzX95wuBQDdcR901jwAYy550-Rbv-oNsgH8qNyLbJYi",
+        },
+        .zgl = .{
+            .url = "git+https://github.com/ziglibs/zgl#5ed429cf5746e51ce72856386be6debf8ef4783c",
+            .hash = "zgl-1.1.0-p_NpAKE-CgBnmyP12H-ldbZLdImx1btyk8zPx0I5CGHX",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        // For example...
+        //"LICENSE",
+        //"README.md",
+    },
+}
