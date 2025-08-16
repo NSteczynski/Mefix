@@ -18,6 +18,7 @@ pub fn main() void {
     const camera: Camera = .{};
 
     while (mefix.loop()) {
+        std.log.info("dt = {}", .{mefix.dt});
         object.update();
 
         mefix.core.clearBackground(.sky_blue);
