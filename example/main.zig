@@ -12,8 +12,10 @@ pub fn main() void {
     const texture = Texture.init(@embedFile("test_image.bmp"));
     defer texture.deinit();
     var object: Object = .{
-        .sprite = .{ .texture = texture },
+        .sprite = .default(),
     };
+
+    object.sprite.?.texture = texture;
 
     const camera: Camera = .{};
 
