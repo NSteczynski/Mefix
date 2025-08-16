@@ -19,7 +19,7 @@ pub fn init(width: u32, height: u32, title: [:0]const u8) void {
 
 pub fn loop() bool {
     const lap: f64 = @floatFromInt(timer.lap());
-    dt = @floatCast(lap * 1e-6);
+    dt = @floatCast(lap * 1e-9);
     glfw.pollEvents();
 
     core.window.swapBuffers();
