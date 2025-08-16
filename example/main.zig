@@ -12,15 +12,12 @@ pub fn main() void {
     const texture = Texture.init(@embedFile("test_image.bmp"));
     defer texture.deinit();
     var object: Object = .{
-        .sprite = .default(),
+        .sprite = .{ .texture = texture },
     };
-
-    object.sprite.?.texture = texture;
 
     const camera: Camera = .{};
 
     while (mefix.loop()) {
-        std.log.info("dt = {}", .{mefix.dt});
         object.update();
 
         mefix.core.clearBackground(.sky_blue);
