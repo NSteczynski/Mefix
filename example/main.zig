@@ -3,7 +3,7 @@ const mefix = @import("mefix");
 const Camera = mefix.Camera;
 const graphics = mefix.graphics;
 const Texture = graphics.Texture;
-const Sprite = graphics.Sprite;
+const Object = @import("Object.zig");
 
 pub fn main() void {
     mefix.init(800, 600, "example");
@@ -11,18 +11,17 @@ pub fn main() void {
 
     const texture = Texture.init(@embedFile("test_image.bmp"));
     defer texture.deinit();
-    const sprite: Sprite = .{ .texture = texture };
-
-    const texture2 = Texture.init(@embedFile("test_image.png"));
-    defer texture2.deinit();
-    const sprite2: Sprite = .{ .texture = texture2 };
+    var object: Object = .{
+        .sprite = .{ .texture = texture },
+    };
 
     const camera: Camera = .{};
 
     while (mefix.loop()) {
+        object.update();
+
         mefix.core.clearBackground(.sky_blue);
         camera.render();
-        sprite.draw();
-        sprite2.draw();
+        object.render();
     }
 }
