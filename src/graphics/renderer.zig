@@ -63,6 +63,29 @@ pub fn draw() void {
     );
 }
 
+pub fn getLocation(location_type: enum(u1) { uniform, attrib }, name: [:0]const u8) ?u32 {
+    return switch (location_type) {
+        .attrib => program.attribLocation(name),
+        .uniform => program.uniformLocation(name),
+    };
+}
+
+pub fn set(
+    comptime method: enum(u2) { @"1fv", @"3fv", @"4fv", matrix4fv },
+    name: [:0]const u8,
+    value: anytype,
+) void {
+    const location = getLocation(.uniform, name) orelse
+        return std.log.err("Could not find location of {s} in renderer.set", .{name});
+
+    switch (method) {
+        .@"1fv" => zgl.uniform1fv(location, &.{value}),
+        .@"3fv" => zgl.uniform3fv(location, &.{value}),
+        .@"4fv" => zgl.uniform4fv(location, &.{value}),
+        .matrix4fv => zgl.uniformMatrix4fv(location, false, &.{value}),
+    }
+}
+
 pub fn deinit() void {
     program.delete();
     vao.delete();

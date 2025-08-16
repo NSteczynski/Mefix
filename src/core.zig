@@ -2,6 +2,8 @@ const std = @import("std");
 const zgl = @import("zgl");
 const glfw = @import("glfw");
 
+pub const vector = @import("core/vector.zig");
+
 pub var window: glfw.Window = undefined;
 
 fn glGetProcAddress(_: glfw.GLProc, proc: [:0]const u8) ?zgl.binding.FunctionPointer {

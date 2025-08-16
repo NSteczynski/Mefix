@@ -1,5 +1,6 @@
 const std = @import("std");
 const mefix = @import("mefix");
+const Camera = mefix.Camera;
 const graphics = mefix.graphics;
 const Texture = graphics.Texture;
 const Sprite = graphics.Sprite;
@@ -16,8 +17,11 @@ pub fn main() void {
     defer texture2.deinit();
     const sprite2: Sprite = .{ .texture = texture2 };
 
+    const camera: Camera = .{};
+
     while (mefix.loop()) {
         mefix.core.clearBackground(.sky_blue);
+        camera.render();
         sprite.draw();
         sprite2.draw();
     }
